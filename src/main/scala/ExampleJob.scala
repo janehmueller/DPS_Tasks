@@ -1,3 +1,7 @@
+import de.hpi.ingestion.framework.SparkJob
+import org.apache.spark.SparkContext
+import org.apache.spark.rdd.RDD
+
 /*
 Copyright 2016-17, Hasso-Plattner-Institut fuer Softwaresystemtechnik GmbH
 
@@ -13,6 +17,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-class ExampleJob {
+class ExampleJob extends SparkJob {
+    var inputData: RDD[String] = _
+    var outputData: RDD[String] = _
 
+    override def load(sc: SparkContext): Unit = {
+        // load input data from cassandra or hdfs
+        // inputData = something
+    }
+
+    override def save(sc: SparkContext): Unit = {
+        // save processed data to the cassandra
+        // save outputData
+    }
+
+    override def run(sc: SparkContext): Unit = {
+        // proccess input data
+        // outputData = something
+    }
 }

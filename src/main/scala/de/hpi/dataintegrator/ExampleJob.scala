@@ -4,18 +4,14 @@ import com.datastax.spark.connector._
 import de.hpi.ingestion.framework.SparkJob
 import org.apache.spark.SparkContext
 import org.apache.spark.rdd.RDD
-
-
-case class Test(a: String, b: Int, c: List[Int])
+import play.api.libs.json.Json
 
 class ExampleJob extends SparkJob {
-//    var inputData: RDD[Test] = _
+    var wikidataRaw: RDD[String] = _
 //    var outputData: RDD[String] = _
 
     override def load(sc: SparkContext): Unit = {
-//        inputData = sc.cassandraTable[Test]("keyspace", "table")
-        // load input data from cassandra or hdfs
-        // inputData = something
+        wikidataRaw = sc.textFile("dps/wikidata_dump_small.json")
     }
 
     override def save(sc: SparkContext): Unit = {
@@ -24,13 +20,17 @@ class ExampleJob extends SparkJob {
     }
 
     override def run(sc: SparkContext): Unit = {
-        // proccess input data
-        // outputData = something
-//        val test = inputData.flatMap { testEntity =>
-//            testEntity.c
-//
-//        }
-//        test
-        println("Hallo")
+        wikidataRaw
+            .map(_.replaceAll("^\\[|,$|, $|\\]$", ""))
+            .collect {
+                case line: String if line.nonEmpty => parseRawLine(line)
+            }.collect
+            .foreach(println)
+    }
+
+
+    def parseRawLine(line: String): String = {
+        val json = Json.parse(line)
+        (json \ "id").as[String]
     }
 }

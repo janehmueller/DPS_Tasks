@@ -1,2 +1,16 @@
+# sbt
+target/
+
+# IntelliJ
+.idea/
+*.iml
 *.class
+
+# macOS files
+.DS_Store
+
+# Logfiles
 *.log
+
+# External library
+ingestion.jar

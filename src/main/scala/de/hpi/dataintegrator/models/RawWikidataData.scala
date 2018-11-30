@@ -17,7 +17,8 @@ case class Sitelink(
 )
 
 case class Property(
-    propertytype: String,
-    snaktype: String,
-    value: String
+    propertytype: Option[String],
+    claimtype: Option[String],
+    snaktype: Option[String],
+    value: Option[String]
 )

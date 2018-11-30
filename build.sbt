@@ -13,10 +13,10 @@ lazy val dps_tasks = (project in file("."))
 		mainClass in Compile := Some("dps_tasks")
 	)
 
-//// repositories to use for dependency lookup. the public maven repository is the default lookup repository.
-//resolvers ++= Seq(
+// repositories to use for dependency lookup. the public maven repository is the default lookup repository.
+resolvers ++= Seq(
 //	"Spark Packages Repo" at "https://dl.bintray.com/spark-packages/maven"
-//)
+)
 
 // additional dependencies used in the project
 // provided flag is used for jars included in the spark environment
@@ -29,17 +29,8 @@ libraryDependencies ++= Seq(
 	"org.scalactic" %% "scalactic" % "3.0.4" % "provided",
 	"org.scalatest" %% "scalatest" % "3.0.4" % "provided",
 	"com.holdenkarau" %% "spark-testing-base" % "2.1.0_0.7.4" % "provided",
-//    "com.datastax.spark" %% "spark-cassandra-connector" % "2.0.5",
-//    "com.databricks" %% "spark-xml" % "0.4.1"//,
-//    "info.bliki.wiki" % "bliki-core" % "3.1.0" exclude("ch.qos.logback", "logback-classic"),
-//    "org.jsoup" % "jsoup" % "1.10.3",
-//    "com.esotericsoftware" % "kryo" % "4.0.1",
-//    "com.google.protobuf" % "protobuf-java" % "2.6.1",
-//    "org.apache.lucene" % "lucene-analyzers-common" % "7.0.1",
-//    "com.typesafe.play" %% "play-json" % "2.4.11" // can't update due to jackson version (conflict with spark)
-//    "com.rockymadden.stringmetric" %% "stringmetric-core" % "0.27.4",
-//    "graphframes" % "graphframes" % "0.5.0-spark2.1-s_2.11",
-//    "org.rogach" %% "scallop" % "3.1.0"
+    "com.datastax.spark" %% "spark-cassandra-connector" % "2.0.5",
+    "io.spray" %%  "spray-json" % "1.3.4"
 )
 
 // exclude scala libraries from assembly jar as they are provided by the spark environment

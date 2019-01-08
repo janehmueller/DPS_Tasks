@@ -16,8 +16,9 @@ target/
 ingestion.jar
 
 # task3 data
-data/*
+data
 
 # python
 __pycache__
 *.png
+

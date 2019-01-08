@@ -14,3 +14,10 @@ target/
 
 # External library
 ingestion.jar
+
+# task3 data
+data/*
+
+# python
+__pycache__
+*.png

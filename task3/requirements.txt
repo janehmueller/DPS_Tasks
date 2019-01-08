@@ -1,0 +1,4 @@
+pydot
+graphviz
+matplotlib
+tensorflow

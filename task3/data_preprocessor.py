@@ -2,7 +2,7 @@ import csv
 import sys
 from csv import DictReader
 from random import shuffle
-from typing import List, Tuple
+from typing import List, Tuple, Set
 
 import numpy as np
 from tensorflow.python.keras.preprocessing.sequence import pad_sequences
@@ -36,14 +36,13 @@ class DataPreprocessor(Sequence):
 
     def read_facebook_data(self) -> List[str]:
         file_name = "data/materialien/facebook_foursquare_gowalla_sna.csv"
-        lines = self.read_csv(file_name)
+        columns = {"Phone", "Zip", "Latitude", "Longitude", "Name", "Street"}
+        lines = self.read_csv(file_name, columns_to_keep=columns)
         samples = []
         for line in lines:
-            phone = line["Phone"]
-            zipcode = line["Zip"]
-            lat = line["Latitude"]
-            long = line["Longitude"]
-            samples += [f"{sample.strip()}\n" for sample in [phone, zipcode, lat, long] if sample]
+            for key, value in line.items():
+                if value:
+                    samples.append(f"{value.strip()}\n")
         return samples
 
     def read_soccer_file(self) -> List[str]:
@@ -52,16 +51,22 @@ class DataPreprocessor(Sequence):
         dates = [named_row['date'] for named_row in lines]
         return dates
 
-    def read_csv(self, file_name: str, delimiter: str = ",", quotechar: str = '"', has_header: bool = True) -> list:
+    def read_csv(file_name: str,
+                 delimiter: str = ",",
+                 quotechar: str = '"',
+                 has_header: bool = True,
+                 columns_to_keep: Set[str] = None) -> list:
         lines = []
         csv.field_size_limit(sys.maxsize)
-        with open(file_name, 'r') as soccer_file:
-            data: DictReader = csv.reader(soccer_file, delimiter=delimiter, quotechar=quotechar)
+        with open(file_name, 'r') as file:
+            data: csv.DictReader = csv.reader(file, delimiter=delimiter, quotechar=quotechar)
             if has_header:
                 header = next(data)
                 for row in data:
                     padded_row = row + ((len(header) - len(row)) * [None])
                     named_row = {name: padded_row[index] for index, name in enumerate(header)}
+                    if columns_to_keep:
+                        named_row = {key: value for key, value in named_row.items() if key in columns_to_keep}
                     lines.append(named_row)
             else:
                 lines = [row for row in data]

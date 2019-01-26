@@ -10,8 +10,8 @@ def read_csv(file_name: str,
              columns_to_keep: Set[str] = None) -> list:
     lines = []
     csv.field_size_limit(sys.maxsize)
-    with open(file_name, 'r') as soccer_file:
-        data: csv.DictReader = csv.reader(soccer_file, delimiter=delimiter, quotechar=quotechar)
+    with open(file_name, 'r') as file:
+        data: csv.DictReader = csv.reader(file, delimiter=delimiter, quotechar=quotechar)
         if has_header:
             header = next(data)
             for row in data:

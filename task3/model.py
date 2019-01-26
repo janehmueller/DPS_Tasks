@@ -1,9 +1,8 @@
 from typing import List
 
-from keras import Sequential, Model as KerasModel
 from keras.layers import LSTM, Dense, Embedding
 from keras.utils import plot_model
-from keras.models import load_model
+from keras.models import load_model, Sequential, Model as KerasModel
 
 from char_tokenizer import Tokenizer
 from data_preprocessor import DataPreprocessor

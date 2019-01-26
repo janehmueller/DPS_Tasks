@@ -5,7 +5,6 @@ from typing import List, Tuple, Set
 
 import numpy as np
 from keras.preprocessing.sequence import pad_sequences
-
 from keras.utils import Sequence
 
 from char_tokenizer import Tokenizer

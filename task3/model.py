@@ -41,7 +41,8 @@ class Model(object):
                                                 epochs=self.epochs,
                                                 steps_per_epoch=len(self.data_sequence),
                                                 # shuffle=True,
-                                                validation_data=self.val_sequence)
+                                                validation_data=self.val_sequence,
+                                                validation_steps=len(self.val_sequence))
         self.model_path = path or f"models/model_emb{self.embedding_size}_epochs{self.epochs}.hdf5"
         self.model.save(self.model_path)
 

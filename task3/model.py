@@ -2,7 +2,7 @@ from typing import List
 
 from tensorflow.python.keras import Sequential, Model as KerasModel
 from tensorflow.python.keras.layers import LSTM, Dense, Embedding
-# from tensorflow.python.keras.utils import plot_model
+from tensorflow.python.keras.utils import plot_model
 from tensorflow.python.keras.models import load_model
 
 from char_tokenizer import Tokenizer
@@ -29,9 +29,12 @@ class Model(object):
         self.model.compile('adam', loss='binary_crossentropy', metrics=['accuracy'])
         self.model.summary()
 
-        # file_name = 'model'
-        # plot_model(self.model, to_file=f'{file_name}.png', show_shapes=True)
-        # print(f"Model built. Saved {file_name}.png\n")
+        try:
+            file_name = 'model'
+            plot_model(self.model, to_file=f'{file_name}.png', show_shapes=True)
+            print(f"Model built. Saved {file_name}.png\n")
+        except (ImportError, FileNotFoundError):
+            print(f"Skipping plotting of model due to missing dependencies.")
 
     def train(self, path: str = None):
         self.history = self.model.fit_generator(self.data_sequence,

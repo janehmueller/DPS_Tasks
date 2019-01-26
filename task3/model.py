@@ -12,8 +12,9 @@ from prediction_sequence import PredictionSequence
 class Model(object):
     def __init__(self):
         self.embedding_size = 3
-        self.epochs = 2
-        self.data_sequence = DataPreprocessor(64)
+        self.epochs = 10
+        self.data_sequence = DataPreprocessor(64, train=True)
+        self.val_sequence = DataPreprocessor(64, train=False)
         self.history = None
         self.model_path: str = None
         self.model: KerasModel = None
@@ -34,7 +35,8 @@ class Model(object):
     def train(self, path: str = None):
         self.history = self.model.fit_generator(self.data_sequence,
                                                 epochs=self.epochs,
-                                                shuffle=True)
+                                                shuffle=True,
+                                                validation_data=self.val_sequence)
         self.model_path = path or f"models/model_emb{self.embedding_size}_epochs{self.epochs}.hdf5"
         self.model.save(self.model_path)
 

@@ -13,7 +13,8 @@ from char_tokenizer import Tokenizer
 
 class DataPreprocessor(Sequence):
 
-    def __init__(self, batch_size: int = 32):
+    def __init__(self, batch_size: int = 32, train: bool = True):
+        self.train = train
         self.batch_size = batch_size
         self.tokenizer = Tokenizer()
         samples = self.positive_samples() + self.negative_samples()
@@ -77,19 +78,23 @@ class DataPreprocessor(Sequence):
     def positive_samples(self) -> List[Tuple[str, float]]:
         samples = []
         path = "preprocessed_data"
-        full_file = f"{path}/positive_date_samples.txt"
-        sample_file = f"{path}/pos_sample.txt"
-        with open(sample_file, "r") as date_file:
+        if self.train:
+            file = f"{path}/pos_samples_train.txt"
+        else:
+            file = f"{path}/pos_samples_val.txt"
+        with open(file, "r") as date_file:
             for line in date_file:
                 samples.append((line.strip(), 1.0))
         return samples
 
     def negative_samples(self) -> List[Tuple[str, float]]:
         path = "preprocessed_data"
-        full_file = f"{path}/negative_fb_samples.txt"
-        sample_file = f"{path}/neg_sample.txt"
+        if self.train:
+            file = f"{path}/neg_samples_train.txt"
+        else:
+            file = f"{path}/neg_samples_val.txt"
         samples = []
-        with open(sample_file, "r") as fb_file:
+        with open(file, "r") as fb_file:
             for line in fb_file:
                 samples.append((line.strip(), 0.0))
         return samples

@@ -1,6 +1,5 @@
 import csv
 import sys
-from csv import DictReader
 from random import shuffle
 from typing import List, Tuple, Set
 
@@ -34,10 +33,11 @@ class DataPreprocessor(Sequence):
     def vocab_size(self) -> int:
         return self.tokenizer.vocab_size()
 
-    def read_facebook_data(self) -> List[str]:
+    @classmethod
+    def read_facebook_data(cls) -> List[str]:
         file_name = "data/materialien/facebook_foursquare_gowalla_sna.csv"
         columns = {"Phone", "Zip", "Latitude", "Longitude", "Name", "Street"}
-        lines = self.read_csv(file_name, columns_to_keep=columns)
+        lines = cls.read_csv(file_name, columns_to_keep=columns)
         samples = []
         for line in lines:
             for key, value in line.items():
@@ -45,12 +45,14 @@ class DataPreprocessor(Sequence):
                     samples.append(f"{value.strip()}\n")
         return samples
 
-    def read_soccer_file(self) -> List[str]:
+    @classmethod
+    def read_soccer_file(cls) -> List[str]:
         file_name = "data/soccer/match.csv"
-        lines = self.read_csv(file_name)
-        dates = [named_row['date'] for named_row in lines]
+        lines = cls.read_csv(file_name, columns_to_keep={"date"})
+        dates = [named_row["date"] for named_row in lines if named_row["date"]]
         return dates
 
+    @staticmethod
     def read_csv(file_name: str,
                  delimiter: str = ",",
                  quotechar: str = '"',
@@ -94,8 +96,7 @@ class DataPreprocessor(Sequence):
 
 
 if __name__ == "__main__":
-    seq = DataPreprocessor()
-    fb = seq.read_facebook_data()
+    fb = DataPreprocessor.read_facebook_data()
     print(len(fb))
     with open("facebook_samples.txt", "w") as file:
         file.writelines(fb)

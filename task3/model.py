@@ -1,5 +1,6 @@
 from typing import List
 
+from keras.callbacks import ModelCheckpoint
 from keras.layers import LSTM, Dense, Embedding
 from keras.utils import plot_model
 from keras.models import load_model, Sequential, Model as KerasModel
@@ -37,13 +38,17 @@ class Model(object):
             print(f"Skipping plotting of model due to missing dependencies.")
 
     def train(self, path: str = None):
+        self.model_path = path or f"models/model_emb{self.embedding_size}_epochs{self.epochs}.hdf5"
+        checkpoint = ModelCheckpoint(f"models/checkpoint_emb{self.embedding_size}_epochs" + '{epoch:02d}.hdf5', verbose=1)
         self.history = self.model.fit_generator(self.data_sequence,
+                                                callbacks=[checkpoint],
                                                 epochs=self.epochs,
                                                 steps_per_epoch=len(self.data_sequence),
                                                 # shuffle=True,
                                                 validation_data=self.val_sequence,
+                                                max_queue_size=1024,
                                                 validation_steps=len(self.val_sequence))
-        self.model_path = path or f"models/model_emb{self.embedding_size}_epochs{self.epochs}.hdf5"
+
         self.model.save(self.model_path)
 
     def predict(self, data: List[str] = None, model_path: str = None):

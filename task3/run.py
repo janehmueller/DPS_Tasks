@@ -1,30 +1,17 @@
-from tensorflow.python.keras import Sequential
-from tensorflow.python.keras.layers import LSTM, Dense, Embedding
-from tensorflow.python.keras.utils import plot_model
+from model import Model
 
-from data_preprocessor import DataPreprocessor
 
-soccer = 'data/match.csv'
+def train(model: Model):
+    model.build()
+    model.train()
 
 
 def main():
-    embedding_size = 3
-    data_sequence = DataPreprocessor(soccer, 32)
-
-    model = Sequential()
-    model.add(Embedding(data_sequence.vocab_size(), embedding_size))
-    model.add(LSTM(embedding_size))
-    model.add(Dense(1, activation='sigmoid'))
-
-    model.compile('rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
-
-    file_name = 'model'
-    plot_model(model, to_file=f'{file_name}.png', show_shapes=True)
-    print(f"Model built. Saved {file_name}.png\n")
-
-    history = model.fit_generator(data_sequence,
-                                  epochs=5,
-                                  shuffle=True)
+    model = Model()
+    # train(model)
+    data = ["1989-12-11", "1988-11-12", "thisIsDate", "1966-02-24", "1957-02-05", "12-11-1989", "2008-08-08",
+            "2017-01-07", "2014-13-31", "2000-01-32"]
+    model.predict(data, model_path="models/model_emb3_epochs2.hdf5")
 
 
 if __name__ == '__main__':

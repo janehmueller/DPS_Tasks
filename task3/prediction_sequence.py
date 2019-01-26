@@ -1,9 +1,9 @@
 from typing import List
 
 import numpy as np
-from tensorflow.python.keras.preprocessing.sequence import pad_sequences
+from keras.preprocessing.sequence import pad_sequences
 
-from tensorflow.python.keras.utils import Sequence
+from keras.utils import Sequence
 
 from char_tokenizer import Tokenizer
 from data_preprocessor import DataPreprocessor

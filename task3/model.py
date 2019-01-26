@@ -1,9 +1,9 @@
 from typing import List
 
-from tensorflow.python.keras import Sequential, Model as KerasModel
-from tensorflow.python.keras.layers import LSTM, Dense, Embedding
-from tensorflow.python.keras.utils import plot_model
-from tensorflow.python.keras.models import load_model
+from keras import Sequential, Model as KerasModel
+from keras.layers import LSTM, Dense, Embedding
+from keras.utils import plot_model
+from keras.models import load_model
 
 from char_tokenizer import Tokenizer
 from data_preprocessor import DataPreprocessor
@@ -15,6 +15,7 @@ class Model(object):
         self.embedding_size = 3
         self.epochs = 10
         self.data_sequence = DataPreprocessor(64, train=True)
+        self.data_sequence.tokenizer.save_vocab()
         self.val_sequence = DataPreprocessor(64, train=False)
         self.history = None
         self.model_path: str = None
@@ -43,7 +44,6 @@ class Model(object):
                                                 validation_data=self.val_sequence)
         self.model_path = path or f"models/model_emb{self.embedding_size}_epochs{self.epochs}.hdf5"
         self.model.save(self.model_path)
-        self.data_sequence.tokenizer.save_vocab()
 
     def predict(self, data: List[str] = None, model_path: str = None):
         if self.model is None and model_path is not None:

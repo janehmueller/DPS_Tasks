@@ -1,4 +1,6 @@
 pydot
 graphviz
 matplotlib
-tensorflow
+tensorflow==1.2.1
+keras
+tensorflow_gpu==1.2.1

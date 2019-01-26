@@ -39,6 +39,7 @@ class Model(object):
     def train(self, path: str = None):
         self.history = self.model.fit_generator(self.data_sequence,
                                                 epochs=self.epochs,
+                                                steps_per_epoch=len(self.data_sequence),
                                                 # shuffle=True,
                                                 validation_data=self.val_sequence)
         self.model_path = path or f"models/model_emb{self.embedding_size}_epochs{self.epochs}.hdf5"
@@ -55,7 +56,7 @@ class Model(object):
             self.train()
 
         pred_sequence = PredictionSequence(self.data_sequence, data)
-        predictions = self.model.predict_generator(pred_sequence)
+        predictions = self.model.predict_generator(pred_sequence, steps=len(pred_sequence))
         for index, sample in enumerate(pred_sequence.samples):
             prediction = predictions[index][0]
             print(f"Predicted for sample {sample}: {prediction}")

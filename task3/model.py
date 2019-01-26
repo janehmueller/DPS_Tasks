@@ -39,7 +39,7 @@ class Model(object):
     def train(self, path: str = None):
         self.history = self.model.fit_generator(self.data_sequence,
                                                 epochs=self.epochs,
-                                                shuffle=True,
+                                                # shuffle=True,
                                                 validation_data=self.val_sequence)
         self.model_path = path or f"models/model_emb{self.embedding_size}_epochs{self.epochs}.hdf5"
         self.model.save(self.model_path)

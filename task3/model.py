@@ -1,9 +1,11 @@
+import json
 from typing import List
 
 from keras.callbacks import ModelCheckpoint
 from keras.layers import LSTM, Dense, Embedding
 from keras.utils import plot_model
 from keras.models import load_model, Sequential, Model as KerasModel
+import matplotlib.pyplot as plt
 
 from char_tokenizer import Tokenizer
 from data_preprocessor import DataPreprocessor
@@ -14,6 +16,7 @@ class Model(object):
     def __init__(self):
         self.embedding_size = 3
         self.epochs = 10
+        self.hidden_state_size = 16
         self.data_sequence = DataPreprocessor(64, train=True)
         self.data_sequence.tokenizer.save_vocab()
         self.val_sequence = DataPreprocessor(64, train=False)
@@ -24,10 +27,10 @@ class Model(object):
     def build(self):
         self.model = Sequential()
         self.model.add(Embedding(self.data_sequence.vocab_size(), self.embedding_size))
-        self.model.add(LSTM(self.embedding_size))
+        self.model.add(LSTM(self.hidden_state_size))
         self.model.add(Dense(1, activation='sigmoid'))
 
-        self.model.compile('adam', loss='binary_crossentropy', metrics=['accuracy'])
+        self.model.compile('adam', loss='binary_crossentropy', metrics=['acc'])
         self.model.summary()
 
         try:
@@ -43,13 +46,12 @@ class Model(object):
         self.history = self.model.fit_generator(self.data_sequence,
                                                 callbacks=[checkpoint],
                                                 epochs=self.epochs,
-                                                steps_per_epoch=len(self.data_sequence),
-                                                # shuffle=True,
+                                                shuffle=True,
                                                 validation_data=self.val_sequence,
-                                                max_queue_size=1024,
-                                                validation_steps=len(self.val_sequence))
+                                                max_queue_size=1024)
 
         self.model.save(self.model_path)
+        self.plot_training()
 
     def predict(self, data: List[str] = None, model_path: str = None):
         if self.model is None and model_path is not None:
@@ -66,3 +68,35 @@ class Model(object):
         for index, sample in enumerate(pred_sequence.samples):
             prediction = predictions[index][0]
             print(f"Predicted for sample {sample}: {prediction}")
+
+    def plot_training(self):
+        """Plot graphs"""
+        # Load the training statistics (model.history)
+        # Plot training loss and accuracy
+        history = self.history.history
+        json.dump(history, open(f"model_history_backup_e{self.epochs}.json", "w"))
+        epochs = range(1, self.epochs + 1)
+
+        f = plt.figure()
+        plt.plot(range(10), range(10), "o")
+        plt.show()
+
+        fig = plt.figure()
+        plt.plot(epochs, history['loss'], 'bo', label='Training loss')
+        plt.plot(epochs, history['val_loss'], 'b', label='Validation loss')
+        plt.title('Training and validation loss')
+        plt.xlabel('Epochs')
+        plt.ylabel('Loss')
+        plt.legend()
+        fig.savefig(f"plot_loss_e{self.epochs}.pdf", bbox_inches='tight')
+        plt.clf()
+
+        # Plot validation loss and accuracy
+        fig = plt.figure()
+        plt.plot(epochs, history['acc'], 'bo', label='Training acc')
+        plt.plot(epochs, history['val_acc'], 'b', label='Validation acc')
+        plt.title('Training and validation accuracy')
+        plt.xlabel('Epochs')
+        plt.ylabel('Accuracy')
+        plt.legend()
+        fig.savefig(f"plot_acc_e{self.epochs}.pdf", bbox_inches='tight')

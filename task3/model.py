@@ -37,7 +37,7 @@ class Model(object):
             file_name = 'model'
             plot_model(self.model, to_file=f'{file_name}.png', show_shapes=True)
             print(f"Model built. Saved {file_name}.png\n")
-        except (ImportError, FileNotFoundError):
+        except (ImportError, FileNotFoundError, OSError):
             print(f"Skipping plotting of model due to missing dependencies.")
 
     def train(self, path: str = None):

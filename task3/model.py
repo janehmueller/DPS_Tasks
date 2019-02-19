@@ -77,10 +77,6 @@ class Model(object):
         json.dump(history, open(f"model_history_backup_e{self.epochs}.json", "w"))
         epochs = range(1, self.epochs + 1)
 
-        f = plt.figure()
-        plt.plot(range(10), range(10), "o")
-        plt.show()
-
         fig = plt.figure()
         plt.plot(epochs, history['loss'], 'bo', label='Training loss')
         plt.plot(epochs, history['val_loss'], 'b', label='Validation loss')

@@ -22,3 +22,7 @@ data
 __pycache__
 *.png
 
+# result and data files
+*.hdf5
+*.txt
+*.json

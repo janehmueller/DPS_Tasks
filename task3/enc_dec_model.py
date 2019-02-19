@@ -22,7 +22,7 @@ class EncDecModel:
     def __init__(self):
         # Definition of hyper parameter, data sources and other class variables
         self.embedding_dim = 3
-        self.lstm_hidden_dim = 6
+        self.lstm_hidden_dim = self.embedding_dim
         self.max_decoder_length = 25
         self.epochs = 10
         self.data_sequence = DataPreprocessor(64, train=True, enc_dec=True, pad_to=self.max_decoder_length)
@@ -64,10 +64,10 @@ class EncDecModel:
             state = [hidden_state, cell_state]
 
             # Mapping
-            decoder_in = decoder_dense(decoder_in)
+            decoder_out = decoder_dense(decoder_in)
 
             # Reshaping and storing for later concatenation
-            char = Reshape((1, self.data_sequence.vocab_size()))(decoder_in)
+            char = Reshape((1, self.data_sequence.vocab_size()))(decoder_out)
             chars.append(char)
 
             # Teacher forcing. During training the original input will be used as input to the decoder

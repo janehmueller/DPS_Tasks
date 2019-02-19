@@ -1,6 +1,0 @@
-pydot
-graphviz
-matplotlib
-tensorflow==1.13.0rc0
-tensorflow_gpu==1.13.0rc0
-keras==2.2.4

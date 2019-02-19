@@ -6,6 +6,8 @@ from tensorflow.python.keras.layers import LSTM, Dense, Embedding
 from tensorflow.python.keras.utils import plot_model
 from tensorflow.python.keras.models import load_model, Sequential, Model as KerasModel
 
+import matplotlib.pyplot as plt
+
 from char_tokenizer import Tokenizer
 from data_preprocessor import DataPreprocessor
 from prediction_sequence import PredictionSequence

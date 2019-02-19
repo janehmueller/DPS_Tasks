@@ -4,15 +4,16 @@ from random import shuffle
 from typing import List, Tuple, Set
 
 import numpy as np
-from keras.preprocessing.sequence import pad_sequences
-from keras.utils import Sequence
+from tensorflow.python.keras.utils import to_categorical
+from tensorflow.python.keras.preprocessing.sequence import pad_sequences
+from tensorflow.python.keras.utils import Sequence
 
 from char_tokenizer import Tokenizer
 
 
 class DataPreprocessor(Sequence):
 
-    def __init__(self, batch_size: int = 32, train: bool = True):
+    def __init__(self, batch_size: int = 32, train: bool = True, enc_dec=False):
         self.train = train
         self.batch_size = batch_size
         self.tokenizer = Tokenizer()
@@ -20,6 +21,7 @@ class DataPreprocessor(Sequence):
         shuffle(samples)
         self.train_data = np.asarray([self.tokenizer.tokenize(date) for date, label in samples])
         self.labels = np.asarray([label for date, label in samples])
+        self.enc_dec = enc_dec
 
     def __len__(self):
         return int(np.ceil(len(self.train_data) / float(self.batch_size)))
@@ -28,6 +30,8 @@ class DataPreprocessor(Sequence):
         x_batch = self.train_data[batch_index * self.batch_size:(batch_index + 1) * self.batch_size]
         x_batch = pad_sequences(x_batch, padding="post", value=0)
         y_batch = self.labels[batch_index * self.batch_size:(batch_index + 1) * self.batch_size]
+        if self.enc_dec:
+            y_batch = to_categorical(x_batch, num_classes=self.vocab_size())
         return x_batch, y_batch
 
     def vocab_size(self) -> int:

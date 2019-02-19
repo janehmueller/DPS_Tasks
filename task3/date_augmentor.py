@@ -20,8 +20,8 @@ class DateAugmentor(object):
         with open(self.result_file, "a") as file:
             while begin < end:
                 formats = self.datetime_to_str(begin)
-                formats_with_noise = list(chain(*[self.add_noise(form) for form in formats]))
-                file.writelines([f"{line}\n" for line in formats_with_noise])
+                # formats_with_noise = list(chain(*[self.add_noise(form) for form in formats]))
+                file.writelines([f"{line}\n" for line in formats])
                 begin += step
 
     def datetime_to_str(self, date: datetime) -> List[str]:
@@ -79,5 +79,5 @@ class DateAugmentor(object):
 
 
 if __name__ == "__main__":
-    augmentor = DateAugmentor(begin_year=1800, end_year=2100, result_file="dates")
+    augmentor = DateAugmentor(begin_year=1900, end_year=2100, result_file="dates")
     augmentor.generate_date()

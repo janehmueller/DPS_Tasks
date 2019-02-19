@@ -23,6 +23,7 @@ class EncDecModel:
         # Definition of hyper parameter, data sources and other class variables
         self.embedding_dim = 3
         self.lstm_hiddem_dim = 6
+        self.max_decoder_length = 25
         self.epochs = 10
         self.data_sequence = DataPreprocessor(64, train=True, enc_dec=True)
         self.data_sequence.tokenizer.save_vocab()
@@ -56,7 +57,7 @@ class EncDecModel:
         decoder_dense = Dense(self.data_sequence.vocab_size(), activation='softmax')
 
         chars = []  # Container for single results during the loop
-        for i in range(encoder_inputs_emb.shape[1]):
+        for i in range(min(self.max_decoder_length, encoder_inputs_emb.shape[1])):
             # Reshape necessary to match LSTMs interface, cell state will be reintroduced in the next iteration
             decoder_in = Reshape((1, self.lstm_hiddem_dim))(decoder_in)
             decoder_in, hidden_state, cell_state = decoder_lstm(decoder_in, initial_state=state)

@@ -22,12 +22,12 @@ class EncDecModel:
     def __init__(self):
         # Definition of hyper parameter, data sources and other class variables
         self.embedding_dim = 3
-        self.lstm_hiddem_dim = 6
+        self.lstm_hidden_dim = 6
         self.max_decoder_length = 25
         self.epochs = 10
-        self.data_sequence = DataPreprocessor(64, train=True, enc_dec=True)
+        self.data_sequence = DataPreprocessor(64, train=True, enc_dec=True, pad_to=self.max_decoder_length)
         self.data_sequence.tokenizer.save_vocab()
-        self.val_sequence = DataPreprocessor(64, train=False, enc_dec=True)
+        self.val_sequence = DataPreprocessor(64, train=False, enc_dec=True, pad_to=self.max_decoder_length)
         self.history = None
         self.model_path: str = None
         self.model: KerasModel = None
@@ -41,7 +41,7 @@ class EncDecModel:
         encoder_inputs_emb = input_embedding(encoder_inputs)
 
         # Encoder LSTM
-        encoder = LSTM(self.lstm_hiddem_dim, return_state=True)
+        encoder = LSTM(self.lstm_hidden_dim, return_state=True)
         encoder_outputs, state_h, state_c = encoder(encoder_inputs_emb)
         state = [state_h, state_c]  # state will be used to initialize the decoder
 
@@ -53,13 +53,13 @@ class EncDecModel:
         decoder_in = Lambda(constant, arguments={'size': self.embedding_dim})(encoder_inputs_emb)  # "start word"
 
         # Definition of further layers to be used in the model (decoder and mapping to vocab-sized vector)
-        decoder_lstm = LSTM(self.lstm_hiddem_dim, return_sequences=False, return_state=True)
+        decoder_lstm = LSTM(self.lstm_hidden_dim, return_sequences=False, return_state=True)
         decoder_dense = Dense(self.data_sequence.vocab_size(), activation='softmax')
 
         chars = []  # Container for single results during the loop
-        for i in range(min(self.max_decoder_length, encoder_inputs_emb.shape[1])):
+        for i in range(self.max_decoder_length):
             # Reshape necessary to match LSTMs interface, cell state will be reintroduced in the next iteration
-            decoder_in = Reshape((1, self.lstm_hiddem_dim))(decoder_in)
+            decoder_in = Reshape((1, self.embedding_dim))(decoder_in)
             decoder_in, hidden_state, cell_state = decoder_lstm(decoder_in, initial_state=state)
             state = [hidden_state, cell_state]
 
@@ -72,7 +72,7 @@ class EncDecModel:
 
             # Teacher forcing. During training the original input will be used as input to the decoder
             decoder_in_train = Lambda(lambda x, ii: x[:, -ii], arguments={'ii': i+1})(encoder_inputs_emb)
-            decoder_in = K.in_train_phase(decoder_in_train, decoder_in)
+            decoder_in = Lambda(lambda x, y: K.in_train_phase(y, x), arguments={'y': decoder_in_train})(decoder_in)
 
         # Single results are joined together (axis 1 vanishes)
         decoded_seq = Concatenate(axis=1)(chars)

@@ -77,7 +77,7 @@ class EncDecModel:
         # Single results are joined together (axis 1 vanishes)
         decoded_seq = Concatenate(axis=1)(chars)
 
-        self.model = Model([encoder_inputs], decoded_seq, name="enc_dec")
+        self.model = Model(encoder_inputs, decoded_seq, name="enc_dec")
         self.model.compile(optimizer='adam', loss='categorical_crossentropy')
         self.model.summary()
 
@@ -97,11 +97,9 @@ class EncDecModel:
         self.history = self.model.fit_generator(self.data_sequence,
                                                 callbacks=[checkpoint],
                                                 epochs=self.epochs,
-                                                steps_per_epoch=len(self.data_sequence),
-                                                # shuffle=True,
+                                                shuffle=True,
                                                 validation_data=self.val_sequence,
-                                                max_queue_size=1024,
-                                                validation_steps=len(self.val_sequence))
+                                                max_queue_size=1024)
         self.model.save(self.model_path)
 
     def predict(self, data: List[str] = None, model_path: str = None):

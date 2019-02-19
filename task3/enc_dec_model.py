@@ -92,14 +92,16 @@ class EncDecModel:
         self.model_path = path or f"enc_dec_models/model_emb{self.embedding_dim}_epochs{self.epochs}.hdf5"
         checkpoint = ModelCheckpoint(f"enc_dec_models/checkpoint_emb{self.embedding_dim}_epochs" + '{epoch:02d}.hdf5',
                                      verbose=1)
+        # it is currently not possible to save a model with lambda layers/expressions
+        # see: https://github.com/keras-team/keras/issues/8343
+        # saving the model raises the pickling error
 
         # self.data_sequence - in this case y is one hot encoded with vocab size
         self.history = self.model.fit_generator(self.data_sequence,
-                                                callbacks=[checkpoint],
+                                                # callbacks=[checkpoint],
                                                 epochs=self.epochs,
                                                 shuffle=True,
-                                                validation_data=self.val_sequence,
-                                                max_queue_size=1024)
+                                                validation_data=self.val_sequence)
         self.model.save(self.model_path)
 
     def predict(self, data: List[str] = None, model_path: str = None):

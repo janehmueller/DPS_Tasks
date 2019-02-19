@@ -21,7 +21,8 @@ Take a look at the files to see where the used datasets have to be.
 
 
 ### Train encoder decoder model
-Unfortunately this does not quite work yet.
+Unfortunately saving the model is not possible due to an [open issue](https://github.com/keras-team/keras/issues/8343).
+We haven't found a working workaround yet.
 The implementation of the model is in `enc_dec_model.py`.
 ```
 python run_enc_dec.py

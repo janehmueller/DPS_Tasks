@@ -1,4 +1,32 @@
 # Task 3 - Date Format Changer
+### Train scoring model
+```
+python run.py
+# to do a prediction edit the corresponding lines in the file
+```
+Take a look at the [data preprocessor](https://github.com/janehmueller/DPS_Tasks/blob/master/task3/data_preprocessor.py#L81)
+to see where the training and validation data has to be (or edit it).
+
+The implementation of the model is in `model.py`.
+The preprocessing happens in `data_preprocessor.py`.
+
+### Generate training data
+```
+# generate positive training/validation samples
+python date_augmentor.py
+# generate negative training/validation samples
+python extract_negative_samples.py
+```
+Take a look at the files to see where the used datasets have to be.
+
+
+### Train encoder decoder model
+Unfortunately this does not quite work yet.
+The implementation of the model is in `enc_dec_model.py`.
+```
+python run_enc_dec.py
+```
+
 
 ### Data sources
 - [Soccer dataset](https://www.kaggle.com/hugomathien/soccer): Extract the matches table from the sqlite dump
